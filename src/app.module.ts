@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -12,8 +13,8 @@ import { AppController } from './app.controller';
     }),
     // connect mongodb
     MongooseModule.forRoot(process.env.MONGODB_URI),
+    ProductModule,
   ],
   controllers: [AppController],
-  providers: [],
 })
 export class AppModule {}
