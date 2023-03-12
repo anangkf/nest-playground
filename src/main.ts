@@ -7,6 +7,9 @@ async function bootstrap() {
   // secure http headers
   app.use(helmet());
 
+  // enable cors
+  app.enableCors();
+
   await app.listen(3000);
 }
 bootstrap();
