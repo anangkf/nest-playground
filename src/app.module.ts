@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard } from '@nestjs/throttler/dist/throttler.guard';
 import { AppController } from './app.controller';
 import { ProductModule } from './product/product.module';
 
@@ -14,7 +17,20 @@ import { ProductModule } from './product/product.module';
     // connect mongodb
     MongooseModule.forRoot(process.env.MONGODB_URI),
     ProductModule,
+    // added rate limiter
+    ThrottlerModule.forRoot({
+      // set max request to server to 5 request per second
+      ttl: 1,
+      limit: 5,
+    }),
   ],
   controllers: [AppController],
+  // provide ThrottlerGuard (rate limiter)
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
