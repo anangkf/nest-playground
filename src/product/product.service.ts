@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ProductDto } from './dto/product.dto';
@@ -34,5 +38,21 @@ export class ProductService {
       throw new NotFoundException();
     }
     return product;
+  }
+
+  async updateById(id: string, body: ProductDto) {
+    if (!Object.keys(body).length) {
+      throw new BadRequestException();
+    }
+    const data = await this.productModel.findByIdAndUpdate(id, body, {
+      new: true,
+      runValidators: true,
+      context: 'query',
+    });
+
+    if (!data) {
+      throw new NotFoundException();
+    }
+    return data;
   }
 }
