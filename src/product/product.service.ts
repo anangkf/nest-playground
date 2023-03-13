@@ -55,4 +55,13 @@ export class ProductService {
     }
     return data;
   }
+
+  async deleteById(id: string) {
+    const data = await this.productModel.findByIdAndRemove(id);
+
+    if (!data) {
+      throw new NotFoundException();
+    }
+    return data;
+  }
 }
