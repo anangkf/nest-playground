@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ProductDto } from './dto/product.dto';
@@ -15,14 +15,24 @@ export class ProductService {
   }
 
   async create(product: ProductDto) {
-    if (!product.name || !product.price || !product) {
-      throw new BadRequestException('Bad Request', {
-        cause: new Error(),
-        description: 'either property name or price is missing',
-      });
-    }
+    // DEPRECATED after added global error exception filter
+    // if (!product.name || !product.price || !product) {
+    //   throw new BadRequestException('Bad Request', {
+    //     cause: new Error(),
+    //     description: 'either property name or price is missing',
+    //   });
+    // }
 
     const newProduct = new this.productModel(product);
     return newProduct.save();
+  }
+
+  async getById(id: string) {
+    const product = await this.productModel.findById(id);
+
+    if (!product) {
+      throw new NotFoundException();
+    }
+    return product;
   }
 }
