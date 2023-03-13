@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerGuard } from '@nestjs/throttler/dist/throttler.guard';
 import { AppController } from './app.controller';
+import { ValidateMongoID } from './middleware/ValidateMongoID';
 import { ProductModule } from './product/product.module';
 
 @Module({
@@ -33,4 +34,9 @@ import { ProductModule } from './product/product.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // added middleware validating mongoID
+    consumer.apply(ValidateMongoID).forRoutes('*');
+  }
+}
